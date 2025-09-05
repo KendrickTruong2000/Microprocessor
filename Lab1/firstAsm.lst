@@ -1,0 +1,52 @@
+
+as12, an absolute assembler for Motorola MCU's, version 1.2h
+
+                        ;this is my first program
+                        ;        ORG     $1000 ;Directive, the program start from location 1000
+                        ;        LDAA    $1020 ;Instruction contain two part operation and operand
+                        ;        ADDA    $1021
+                        ;        STAA    $1022
+                        ;        SWI
+                        ;        ORG     $1020
+                        ;        FCB     $02,$04
+                        ;        END
+                        ;LDAA Load Accumulator A
+                        ;LDAA #$56 - Accumulator A will be load with value 56 in binary
+                        ;LDAA $56 - Accumulator A will be load with value at the address 56.
+                        ;this is my second program
+                        ;        ORG     $1000
+                        ;        LDAA    DATA
+                        ;        ADDA    DATA+1
+                        ;        STAA    DATA+2
+                        ;        SWI
+                        ;DATA    FCB     $02,$04
+                        ;        END
+                        ;This is my third program
+                        ;Index addressing
+                        ;        ORG     $1000
+                        ;        LDX	#$1000
+                        ;        LDAA    $01,X
+                        ;        INX
+                        ;        ADDA    $02,x
+                        ;        DEX
+                        ;        STAA    $04,x
+                        ;        SWI
+                        ;
+                        ;        ORG     $1020
+                        ;        FCB     $89,$AB,$CD,$FF
+                        ;        END
+                        
+                        ;This is my fourth program
+                        ;The use of label in indexed addressing
+1000                            ORG     $1000
+1000 ce 10 0a                   LDX     #VALS
+1003 a6 00                      LDAA    $00,X
+1005 ab 01                      ADDA    $01,X
+1007 6a 02                      STAA    $02,X
+1009 3f                         SWI
+100a 01 05              VALS    FCB     $01,$05
+                                END
+
+Executed: Fri Sep 05 08:21:16 2025
+Total cycles: 22, Total bytes: 12
+Total errors: 0, Total warnings: 0
