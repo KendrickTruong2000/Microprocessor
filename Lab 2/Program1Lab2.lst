@@ -1,0 +1,24 @@
+
+as12, an absolute assembler for Motorola MCU's, version 1.2h
+
+                        ;Program 1
+1000                            ORG     $1000
+1000 79 10 13                   CLR     COUNT
+1003 86 0d                      LDAA    #$0D
+1005 cd 10 14                   LDY     #STRING
+1008 a1 40              LOOP    CMPA    $00,Y
+100a 27 06                      BEQ     DONE
+100c 72 10 13                   INC     COUNT
+100f 02                         INY
+1010 20 f6                      BRA     LOOP
+1012 3f                 DONE    SWI
+1013                    COUNT   RMB     1
+1014 43 4f 4e 45 53 54  STRING  FCC     "CONESTOGA COLLEGE"
+     4f 47 41 20 43 4f
+     4c 4c 45 47 45
+1025 0d                         FCB     $0D
+                                END
+
+Executed: Wed Sep 10 13:29:30 2025
+Total cycles: 32, Total bytes: 37
+Total errors: 0, Total warnings: 0
