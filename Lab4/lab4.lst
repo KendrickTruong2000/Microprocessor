@@ -1,0 +1,43 @@
+
+as12, an absolute assembler for Motorola MCU's, version 1.2h
+
+                        ;Lab 4: Delay loop and Ports
+                        ;Define Section
+0262                    DDRH    EQU     $0262
+0260                    DRH     EQU     $0260
+0258                    DRP     EQU     $0258
+025a                    DDRP    EQU     $025A
+0268                    DRJ     EQU     $0268
+026a                    DDRJ    EQU     $026A
+0001                    DRB     EQU     $0001
+0003                    DDRB    EQU     $0003
+                        ;Main Program
+1000                            ORG     $1000
+                        ;Set DipSwitch as sending information
+1000 86 00                      LDAA    #$00
+1002 7a 02 62                   STAA    DDRH
+                        ;Set 7 segments and LED as recieving information
+1005 c6 ff                      LDAB    #$FF
+1007 5b 03                      STAB    DDRB
+                        ;Set LEDs as receviing information
+1009 86 ff                      LDAA    #$FF
+100b 7a 02 6a                   STAA    DDRJ
+                        ;Set LEDs to 0n
+100e 86 00                      LDAA    #$00
+1010 7a 02 68                   STAA    DRJ
+                        ;Set 7 Segment as reciveing information
+1013 96 00                      LDAA    $00
+1015 7a 02 5a                   STAA    DDRP
+                        ;Set 7 Segment to off
+1018 86 ff                      LDAA    #$FF
+101a 7a 02 58                   STAA    DRP
+101d b6 02 60           START   LDAA    DRH
+1020 5a 01                      STAA    DRB
+1022 20 f9                      BRA     START
+                                END
+                                
+                        
+
+Executed: Wed Sep 24 13:48:51 2025
+Total cycles: 46, Total bytes: 36
+Total errors: 0, Total warnings: 0

@@ -1,0 +1,53 @@
+
+as12, an absolute assembler for Motorola MCU's, version 1.2h
+
+                        ;Lab 4: question 2: display LED in binary code 1010101010 and 01010101
+                        ;Defin Section
+0001                    DRB     EQU     $0001
+0003                    DDRB    EQU     $0003
+0260                    DRH     EQU     $0260
+0262                    DDRH    EQU     $0262
+0268                    DRJ     EQU     $0268
+026a                    DDRJ    EQU     $026A
+0258                    DRP     EQU     $0258
+025a                    DDRP    EQU     $025A
+                        ;Main Section
+1000                            ORG     $1000
+1000 86 ff                      LDAA    #$FF
+1002 7a 02 62                   STAA    DDRH
+1005 86 ff                      LDAA    #$FF
+1007 5a 03                      STAA    DDRB
+1009 86 ff                      LDAA    #$FF
+100b 7a 02 6a                   STAA    DDRJ
+100e 86 00                      LDAA    #$00
+1010 7a 02 68                   STAA    DRJ
+1013 86 ff                      LDAA    #$FF
+1015 7a 02 5a                   STAA    DDRP
+1018 86 ff                      LDAA    #$FF
+101a 7a 02 58                   STAA    DRP
+101d c6 55              START   LDAB    #%01010101
+101f 5b 01                      STAB    DRB
+1021 16 10 2e                   JSR     TIME25
+1024 c6 aa                      LDAB    #%10101010
+1026 5b 01                      STAB    DRB
+1028 16 10 2e                   JSR     TIME25
+102b 20 f0                      BRA     START
+102d 3f                 FINISH	SWI
+                        
+102e 36                 TIME25  PSHA
+102f 35                         PSHY
+1030 86 fa                      LDAA    #250
+1032 cd 17 70           LOOP    LDY     #6000
+1035 03                 DELAY   DEY
+1036 26 fd                      BNE     DELAY
+1038 43                         DECA
+1039 26 f7                      BNE     LOOP
+103b 31                         PULY
+103c 32                         PULA
+103d 3d                         RTS
+                                END
+                        ;Data Section
+
+Executed: Wed Sep 24 14:09:53 2025
+Total cycles: 101, Total bytes: 62
+Total errors: 0, Total warnings: 0

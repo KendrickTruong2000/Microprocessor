@@ -1,0 +1,16 @@
+ddrb       0003
+ddrj       026a
+ddrp       025a
+delay      10cf
+down       1077
+drb        0001
+drj        0268
+drp        0258
+finish     1025
+getchar    ee84
+loop       10cc
+nums       10d9
+start      100c
+target     10d8
+time25     10c8
+up         1026

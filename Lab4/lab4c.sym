@@ -1,0 +1,9 @@
+ddrb       0003
+ddrj       026a
+ddrp       025a
+delay      1045
+drb        0001
+drj        0268
+drp        0258
+start      100f
+time1      1041

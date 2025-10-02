@@ -1,0 +1,52 @@
+
+as12, an absolute assembler for Motorola MCU's, version 1.2h
+
+                        ;Lab 4 C: Display 1234 with 4 7 segments.
+                        ;Define Section
+0001                    DRB     EQU     $0001
+0003                    DDRB    EQU     $0003
+0268                    DRJ     EQU     $0268
+026a                    DDRJ    EQU     $026A
+0258                    DRP     EQU     $0258
+025a                    DDRP    EQU     $025A
+                        ;Main Section
+1000                            ORG     $1000
+1000 86 ff                      LDAA    #$FF
+1002 5a 03                      STAA    DDRB
+1004 7a 02 5a                   STAA    DDRP
+1007 7a 02 6a                   STAA    DDRJ
+100a 86 00                      LDAA    #$00
+100c 7a 02 68                   STAA    DRJ
+                                
+100f 86 fe              START   LDAA    #$FE
+1011 7a 02 58                   STAA    DRP
+1014 c6 06                      LDAB    #$06
+1016 5b 01                      STAB    DRB
+1018 16 10 41                   JSR     TIME1
+101b 86 fd                      LDAA    #$FD
+101d 7a 02 58                   STAA    DRP
+1020 c6 5b                      LDAB    #$5B
+1022 5b 01                      STAB    DRB
+1024 16 10 41                   JSR     TIME1
+1027 86 fb                      LDAA    #$FB
+1029 7a 02 58                   STAA    DRP
+102c c6 4f                      LDAB    #$4F
+102e 5b 01                      STAB    DRB
+1030 16 10 41                   JSR     TIME1
+1033 86 f7                      LDAA    #$F7
+1035 7a 02 58                   STAA    DRP
+1038 c6 66                      LDAB    #$66
+103a 5b 01                      STAB    DRB
+103c 16 10 41                   JSR     TIME1
+103f 20 ce                      BRA     START
+1041 35                 TIME1   PSHY
+1042 cd 17 70                   LDY     #6000
+1045 03                 DELAY   DEY
+1046 26 fd                      BNE     DELAY
+1048 31                         PULY
+1049 3d                         RTS
+                        ;Data Section
+
+Executed: Wed Sep 24 14:51:07 2025
+Total cycles: 106, Total bytes: 74
+Total errors: 0, Total warnings: 0

@@ -1,0 +1,124 @@
+
+as12, an absolute assembler for Motorola MCU's, version 1.2h
+
+                        ;Equation Define
+0001                    DRB     EQU     $0001
+0003                    DDRB    EQU     $0003
+0268                    DRJ     EQU     $0268
+026a                    DDRJ    EQU     $026A
+0258                    DRP     EQU     $0258
+025a                    DDRP    EQU     $025A
+ee84                    GETCHAR EQU     $EE84
+                        ;Main program
+1000                            ORG     $1000
+1000 86 ff                      LDAA    #$FF
+1002 5a 03                      STAA    DDRB
+1004 7a 02 5a                   STAA    DDRP
+1007 86 00                      LDAA    #$00
+1009 7a 02 58                   STAA    DRP
+100c fe ee 84           START   LDX     GETCHAR
+100f 15 00                      JSR     $00,X
+1011 7b 10 d8                   STAB    TARGET
+1014 7b 10 d8                   STAB    TARGET
+1017 c1 74                      CMPB    #$74
+1019 27 0a                      BEQ     FINISH
+101b c1 75                      CMPB    #$75
+101d 27 07                      BEQ     UP
+101f c1 64                      CMPB    #$64
+1021 27 54                      BEQ     DOWN
+1023 20 e7                      BRA     START
+1025 3f                 FINISH  SWI
+                        
+1026 86 fe              UP      LDAA    #$FE
+1028 7a 02 58                   STAA    DRP
+102b ce 10 d9                   LDX     #NUMS
+102e a6 00                      LDAA    $00,X
+1030 5a 01                      STAA    DRB
+1032 16 10 c8                   JSR     TIME25
+1035 a6 01                      LDAA    $01,X
+1037 5a 01                      STAA    DRB
+1039 16 10 c8                   JSR     TIME25
+103c a6 02                      LDAA    $02,X
+103e 5a 01                      STAA    DRB
+1040 16 10 c8                   JSR     TIME25
+1043 a6 03                      LDAA    $03,X
+1045 5a 01                      STAA    DRB
+1047 16 10 c8                   JSR     TIME25
+104a a6 04                      LDAA    $04,X
+104c 5a 01                      STAA    DRB
+104e 16 10 c8                   JSR     TIME25
+1051 a6 05                      LDAA    $05,X
+1053 5a 01                      STAA    DRB
+1055 16 10 c8                   JSR     TIME25
+1058 a6 06                      LDAA    $06,X
+105a 5a 01                      STAA    DRB
+105c 16 10 c8                   JSR     TIME25
+105f a6 07                      LDAA    $07,X
+1061 5a 01                      STAA    DRB
+1063 16 10 c8                   JSR     TIME25
+1066 a6 08                      LDAA    $08,X
+1068 5a 01                      STAA    DRB
+106a 16 10 c8                   JSR     TIME25
+106d a6 09                      LDAA    $09,X
+106f 5a 01                      STAA    DRB
+1071 16 10 c8                   JSR     TIME25
+1074 06 10 0c                   JMP     START
+                        
+1077 86 f7              DOWN    LDAA    #$F7
+1079 7a 02 58                   STAA    DRP
+107c ce 10 d9                   LDX     #NUMS
+107f a6 09                      LDAA    $09,X
+1081 5a 01                      STAA    DRB
+1083 16 10 c8                   JSR     TIME25
+1086 a6 08                      LDAA    $08,X
+1088 5a 01                      STAA    DRB
+108a 16 10 c8                   JSR     TIME25
+108d a6 07                      LDAA    $07,X
+108f 5a 01                      STAA    DRB
+1091 16 10 c8                   JSR     TIME25
+1094 a6 06                      LDAA    $06,X
+1096 5a 01                      STAA    DRB
+1098 16 10 c8                   JSR     TIME25
+109b a6 05                      LDAA    $05,X
+109d 5a 01                      STAA    DRB
+109f 16 10 c8                   JSR     TIME25
+10a2 a6 04                      LDAA    $04,X
+10a4 5a 01                      STAA    DRB
+10a6 16 10 c8                   JSR     TIME25
+10a9 a6 03                      LDAA    $03,X
+10ab 5a 01                      STAA    DRB
+10ad 16 10 c8                   JSR     TIME25
+10b0 a6 02                      LDAA    $02,X
+10b2 5a 01                      STAA    DRB
+10b4 16 10 c8                   JSR     TIME25
+10b7 a6 01                      LDAA    $01,X
+10b9 5a 01                      STAA    DRB
+10bb 16 10 c8                   JSR     TIME25
+10be a6 00                      LDAA    $00,X
+10c0 5a 01                      STAA    DRB
+10c2 16 10 c8                   JSR     TIME25
+10c5 06 10 0c                   JMP     START
+                        
+10c8 36                 TIME25  PSHA
+10c9 35                         PSHY
+                        ;Load accumulator A with 250 and Y with 6000
+10ca 86 fa                      LDAA    #250
+                        ;Every 6000 loop take 1 milisecond. Constantly make 250 times looping 6000 will delay 250 miliseconds
+10cc cd 17 70           LOOP    LDY     #6000
+10cf 03                 DELAY   DEY
+10d0 26 fd                      BNE     DELAY
+10d2 43                         DECA
+10d3 26 f7                      BNE     LOOP
+10d5 31                         PULY
+10d6 32                         PULA
+10d7 3d                         RTS
+                                END
+                                
+                        ;Data section
+10d8                    TARGET  RMB     1
+10d9 3f 06 5b 4f 66 6d  NUMS    FCB     $3F,$06,$5B,$4F,$66,$6D,$7D,$07,$7F,$6F
+     7d 07 7f 6f
+
+Executed: Thu Oct 02 12:52:27 2025
+Total cycles: 329, Total bytes: 226
+Total errors: 0, Total warnings: 0

@@ -1,0 +1,62 @@
+
+as12, an absolute assembler for Motorola MCU's, version 1.2h
+
+                        ;Lab#3: Microprocessor.
+                        
+                        ;Equation section
+ee88                    PRINTF  EQU     $EE88	;Subrountine for print string
+ee84                    GETCHAR EQU     $EE84 	;Subrountine for getting character from keyboard
+ee86                    PUTCHAR EQU     $EE86	;Subrountine for outputting single character
+                        
+                        ;Main program
+1000                            ORG     $1000   ;Program start from address $1000
+1000 cc 10 4f                   LDD     #STRING ;Load address of STRING to register D
+1003 fe ee 88                   LDX     PRINTF  ;Load PRINTF rountine to register X
+1006 15 00                      JSR     $00,X   ;Jump to subrountine at X with argument D, this print MY TYPE WRITER IS READY
+1008 cc 10 6b           AGAIN   LDD     #NEXTL  ;Load address of NEXTL to register D
+100b fe ee 88                   LDX     PRINTF  ;Load address of PRINTF to register X
+100e 15 00                      JSR     $00,X   ;Print new line of data from NEXTL
+1010 fe ee 84                   LDX     GETCHAR ;Load character input from keyboard to register X
+1013 15 00                      JSR     $00,X   ;Call function GETCHAR to use, getting character from the keyboard
+1015 7b 10 6e                   STAB    TARGET  ;Store value of B to TARGET
+1018 f6 10 6e                   LDAB    TARGET  ;Load address of TARGET to B
+101b c1 1b                      CMPB    #$1B    ;Compare value of B to ESCAPE key.
+101d 27 2f                      BEQ     FINISH  ;If value of B is equal to ESCAPE key stop the program.
+101f fe ee 86                   LDX     PUTCHAR ;Load address of PUTCHAR to X
+1022 15 00                      JSR     $00,X   ;Call function PUTCHAR, to outputting the character
+1024 cc 10 69                   LDD     #EQUAL  ;Load address of EQUAL to D
+1027 fe ee 88                   LDX     PRINTF  ;Load address of PRINTF to X
+102a 15 00                      JSR     $00,X   ;Call function PRINTF, to print "=".
+102c f6 10 6e                   LDAB    TARGET  ;Load address of TARGET to accumulator B
+102f 54                         LSRB
+1030 54                         LSRB
+1031 54                         LSRB
+1032 54                         LSRB            ;Shift left 4 time to isolate upper nibble.
+1033 cb 30                      ADDB    #$30    ;Add value of B to 30.
+1035 fe ee 86                   LDX     PUTCHAR ;Load address of PUTCHAR to register X.
+1038 15 00                      JSR     $00,X   ;Call function PUTCHAR
+103a f6 10 6e                   LDAB    TARGET  ;Load accumulator B with value of TARGET
+103d c4 0f                      ANDB    #$0F    ;AND value of B with 0F
+103f cb 30                      ADDB    #$30    ;Add B with 30
+1041 c1 39                      CMPB    #$39    ;Compare if B is smaller than 39 (number 9 in ASCII table)
+1043 2f 02                      BLE     SKIP    ;Branch if less or equal than
+1045 cb 07                      ADDB    #$07    ;Add value B with 07
+1047 fe ee 86           SKIP    LDX     PUTCHAR ;Else load address of PUTCHAR to register X
+104a 15 00                      JSR     $00,X   ;Call PUTCHAR function
+104c 20 ba                      BRA     AGAIN   ;Loop back agian and wait for next key
+104e 3f                 FINISH  SWI
+                        
+                        ;Data section
+104f 4d 59 20 54 59 50  STRING  FCC     "MY TYPE WRITER IS READY"
+     45 20 57 52 49 54
+     45 52 20 49 53 20
+     52 45 41 44 59
+1066 0d 0a 00                   FCB     $0D,$0A,$00     ;New line + string terminator
+1069 3d 00              EQUAL   FCB     $3D,$00         ;"="
+106b 0d 0a 00           NEXTL   FCB     $0D,$0A,$00     ;New line
+106e                    TARGET  RMB     1               ;Reserve 1 memory bit for TARGET
+                                END
+
+Executed: Tue Sep 23 13:28:32 2025
+Total cycles: 115, Total bytes: 110
+Total errors: 0, Total warnings: 0
