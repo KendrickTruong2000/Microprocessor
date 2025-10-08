@@ -1,13 +1,0 @@
-ddrb       0003
-ddrj       026a
-ddrp       025a
-delay      1007
-delay1     1025
-drb        0001
-drj        0268
-drp        0258
-finish     101d
-loop       1022
-start      100d
-time075    1003
-time125    101e
