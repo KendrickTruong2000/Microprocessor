@@ -1,0 +1,17 @@
+blink      101e
+blink_loop 1020
+ddrb       0003
+ddrj       026a
+ddrp       025a
+delay      1039
+delay_loop 1036
+drb        0001
+drj        0268
+drp        0258
+finish     101d
+freq2      1032
+getchar    ee84
+printf     ee88
+putchar    ee86
+start      100f
+target     1042

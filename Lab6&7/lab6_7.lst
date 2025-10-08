@@ -1,0 +1,122 @@
+
+as12, an absolute assembler for Motorola MCU's, version 1.2h
+
+                        ;Lab 6 & 7
+0001                    DRB     EQU     $0001
+0003                    DDRB    EQU     $0003
+0258                    DRP     EQU     $0258
+025a                    DDRP    EQU     $025A
+0268                    DRJ     EQU     $0268
+026a                    DDRJ    EQU     $026A
+ee84                    GETCHAR EQU     $EE84
+                        
+1000                            ORG     $1000
+1000 86 ff                      LDAA    #$FF
+1002 5a 03                      STAA    DDRB
+1004 7a 02 5a                   STAA    DDRP
+1007 86 00                      LDAA    #$00
+1009 7a 02 58                   STAA    DRP
+100c b7 20                      TPA
+100e 84 af                      ANDA    #%10101111
+1010 b7 02                      TAP
+1012 86 40                      LDAA    #$40
+1014 5a 1e                      STAA    $001E
+1016 cf 20 00                   LDS     #$2000
+1019 cc 10 a0                   LDD     #IRQISR
+101c 7c 3e 72                   STD     $3E72
+101f cc 10 27                   LDD     #XIRQISR
+1022 7c 3e 74                   STD     $3E74
+1025 20 fe              HERE    BRA     HERE
+                        
+1027 86 fe              XIRQISR	LDAA    #$FE
+1029 7a 02 58                   STAA    DRP
+102c ce 10 d5                   LDX     #NUMS
+102f a6 00                      LDAA    $00,X
+1031 5a 01                      STAA    DRB
+1033 16 10 c5                   JSR     FREQ2
+1036 16 10 c5                   JSR     FREQ2
+1039 16 10 c5                   JSR     FREQ2
+103c 16 10 c5                   JSR     FREQ2
+103f a6 01                      LDAA    $01,X
+1041 5a 01                      STAA    DRB
+1043 16 10 c5                   JSR     FREQ2
+1046 16 10 c5                   JSR     FREQ2
+1049 16 10 c5                   JSR     FREQ2
+104c 16 10 c5                   JSR     FREQ2
+104f a6 02                      LDAA    $02,X
+1051 5a 01                      STAA    DRB
+1053 16 10 c5                   JSR     FREQ2
+1056 16 10 c5                   JSR     FREQ2
+1059 16 10 c5                   JSR     FREQ2
+105c 16 10 c5                   JSR     FREQ2
+105f a6 03                      LDAA    $03,X
+1061 5a 01                      STAA    DRB
+1063 16 10 c5                   JSR     FREQ2
+1066 16 10 c5                   JSR     FREQ2
+1069 16 10 c5                   JSR     FREQ2
+106c 16 10 c5                   JSR     FREQ2
+106f a6 04                      LDAA    $04,X
+1071 5a 01                      STAA    DRB
+1073 16 10 c5                   JSR     FREQ2
+1076 16 10 c5                   JSR     FREQ2
+1079 16 10 c5                   JSR     FREQ2
+107c 16 10 c5                   JSR     FREQ2
+107f a6 05                      LDAA    $05,X
+1081 5a 01                      STAA    DRB
+1083 16 10 c5                   JSR     FREQ2
+1086 16 10 c5                   JSR     FREQ2
+1089 16 10 c5                   JSR     FREQ2
+108c 16 10 c5                   JSR     FREQ2
+108f a6 06                      LDAA    $06,X
+1091 5a 01                      STAA    DRB
+1093 16 10 c5                   JSR     FREQ2
+1096 16 10 c5                   JSR     FREQ2
+1099 16 10 c5                   JSR     FREQ2
+109c 16 10 c5                   JSR     FREQ2
+109f 0b                         RTI
+                        
+10a0 86 ff              IRQISR  LDAA    #$FF
+10a2 5a 03                      STAA    DDRB
+10a4 7a 02 5a                   STAA    DDRP
+10a7 7a 02 6a                   STAA    DDRJ
+10aa 7a 02 58                   STAA    DRP
+10ad 16 10 b1                   JSR     BLINK
+10b0 0b                         RTI
+                        
+10b1 86 0a              BLINK   LDAA    #10
+10b3                    BLINK_LOOP
+10b3 c6 ff                      LDAB    #%11111111
+10b5 5b 01                      STAB    DRB
+10b7 16 10 c5                   JSR     FREQ2
+10ba c6 00                      LDAB    #%00000000
+10bc 5b 01                      STAB    DRB
+10be 16 10 c5                   JSR     FREQ2
+10c1 43                         DECA
+10c2 26 ef                      BNE     BLINK_LOOP
+10c4 3d                         RTS
+                        
+10c5 36                 FREQ2   PSHA
+10c6 35                         PSHY
+10c7 86 fa                      LDAA    #250
+10c9                    DELAY_LOOP
+10c9 cd 17 70                   LDY     #6000
+10cc                    FREQ_DELAY
+10cc 03                         DEY
+10cd 26 fd                      BNE     FREQ_DELAY
+10cf 43                         DECA
+10d0 26 f7                      BNE     DELAY_LOOP
+10d2 31                         PULY
+10d3 32                         PULA
+10d4 3d                         RTS
+                                
+                                END
+                        ;DATA
+10d5 3f 06 5b 4f 66 6d  NUMS    FCB     $3F,$06,$5B,$4F,$66,$6D,$7D,$07,$7F,$6F
+     7d 07 7f 6f
+10df                    TARGET  RMB     1
+                                
+                                
+
+Executed: Wed Oct 08 14:42:53 2025
+Total cycles: 355, Total bytes: 223
+Total errors: 0, Total warnings: 0

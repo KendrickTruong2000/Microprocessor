@@ -1,0 +1,17 @@
+blink      10b1
+blink_loop 10b3
+ddrb       0003
+ddrj       026a
+ddrp       025a
+delay_loop 10c9
+drb        0001
+drj        0268
+drp        0258
+freq2      10c5
+freq_delay 10cc
+getchar    ee84
+here       1025
+irqisr     10a0
+nums       10d5
+target     10df
+xirqisr    1027
