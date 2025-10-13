@@ -1,0 +1,17 @@
+count      104a
+ddrb       0003
+ddrj       026a
+ddrp       025a
+delay_loop 1036
+drb        0001
+drj        0268
+drp        0258
+finishi    103f
+freq2      102f
+freq_loop  1033
+getchar    ee84
+loop       1017
+nums       1040
+printf     ee88
+putchar    ee86
+start      100a
