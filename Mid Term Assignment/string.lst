@@ -1,0 +1,167 @@
+
+as12, an absolute assembler for Motorola MCU's, version 1.2h
+
+                        ;--- Define Equation ---
+0001                    DRB     EQU     $0001
+0003                    DDRB    EQU     $0003
+0258                    DRP     EQU     $0258
+025a                    DDRP    EQU     $025A
+0268                    DRJ     EQU     $0268
+026a                    DDRJ    EQU     $026A
+ee88                    PRINTF  EQU     $EE88
+ee84                    GETCHAR EQU     $EE84
+ee86                    PUTCHAR EQU     $EE86
+                        ;--- Main Program ---
+1000                            ORG     $1000
+1000 cf 40 00                   LDS     #$4000          ; initialize stack (important)
+1003 86 ff                      LDAA    #$FF
+1005 5a 03                      STAA    DDRB
+1007 7a 02 6a                   STAA    DDRJ
+100a 7a 02 5a                   STAA    DDRP
+100d 86 00                      LDAA    #$00
+100f 7a 02 58                   STAA    DRP
+                        
+1012 36                 START	PSHA
+1013 37                         PSHB
+1014 3b                         PSHD
+1015 34                         PSHX
+1016 cc 10 d9                   LDD     #PROMPT
+1019 fe ee 88                   LDX     PRINTF
+101c 15 00                      JSR     $00,X
+101e ce 11 19                   LDX     #STR
+1021 7e 11 1c                   STX     VAR
+1024                    READ_LOOP
+1024 fe ee 84                   LDX     GETCHAR
+1027 15 00                      JSR     $00,X
+1029 c1 1b                      CMPB    #$1B
+102b 27 12                      BEQ     END_INPUT
+102d fe 11 1c                   LDX     VAR
+1030 6b 00                      STAB    $00,X
+1032 08                         INX
+1033 7e 11 1c                   STX     VAR
+1036 c6 2a                      LDAB   	#$2A
+1038 fe ee 86                   LDX     PUTCHAR
+103b 15 00                      JSR     $00,X
+103d 20 e5                      BRA     READ_LOOP
+103f                    END_INPUT
+103f cc 11 15                   LDD     #NEXTL
+1042 fe ee 88                   LDX     PRINTF
+1045 15 00                      JSR     $00,X
+1047 30                         PULX
+1048 3a                         PULD
+1049 33                         PULB
+104a 32                         PULA
+                        
+104b 36                 COMPARE PSHA
+104c 37                         PSHB
+104d 3b                         PSHD
+104e 34                         PSHX
+104f 35                         PSHY
+1050 ce 10 ec                   LDX     #PASSKEY
+1053 cd 11 19                   LDY     #STR
+1056                    COMP_LOOP
+1056 a6 00              	LDAA    $00,X
+1058 a1 40                      CMPA    $00,Y
+105a 26 16                      BNE     DISP_WRONG
+105c 02                 	INY
+105d 08                         INX
+105e 26 f6                      BNE     COMP_LOOP
+1060 16 10 69                   JSR     DISP_CORRECT
+1063 31                         PULY
+1064 30                         PULX
+1065 3a                         PULD
+1066 33                         PULB
+1067 32                         PULA
+1068 3d                         RTS
+                        
+1069                    DISP_CORRECT
+1069 cc 11 02                   LDD     #CORRECT_MESS
+106c fe ee 88                   LDX     PRINTF
+106f 15 00                      JSR     $00,X
+1071 3d                         RTS
+                                
+1072                    DISP_WRONG
+1072 f6 10 f0                   LDAB    COUNTER
+1075 cc 10 f1                   LDD     #WRONG_MESS
+1078 fe ee 88                   LDX     PRINTF
+107b 15 00                      JSR     $00,X
+107d 53                         DECB
+107e 06 10 4b                   JMP     COMPARE
+                                
+                        ;--- WAIT 6 Second
+1081 f6 10 ef           WAIT6   LDAB    COUNT
+1084 cd 10 cf                   LDY     #NUMS
+1087 86 fe                      LDAA    #$FE
+1089 7a 02 58                   STAA    DRP
+108c 86 00                      LDAA    #$00
+108e a6 40              LOOP    LDAA    $00,Y
+1090 5a 01                      STAA    DRB
+1092 16 10 bf                   JSR     FREQ2
+1095 16 10 bf                   JSR     FREQ2
+1098 16 10 bf                   JSR     FREQ2
+109b 16 10 bf                   JSR     FREQ2
+109e 02                         INY
+109f 53                         DECB
+10a0 26 ec                      BNE     LOOP
+10a2 6a 40                      STAA    $00,Y
+10a4 20 db                      BRA     WAIT6
+10a6 06 10 12                   JMP     START
+                        
+                        ;--- Blink LEDs 10 times
+10a9 86 0a              BLINK   LDAA    #10
+10ab                    BLINK_LOOP
+10ab c6 ff                      LDAB    #%11111111
+10ad 5b 01                      STAB    DRB
+10af 16 10 bf                   JSR     FREQ2
+10b2 c6 00                      LDAB    #%00000000
+10b4 5b 01                      STAB    DRB
+10b6 16 10 bf                   JSR     FREQ2
+10b9 43                         DECA
+10ba 26 ef                      BNE     BLINK_LOOP
+10bc 06 10 12                   JMP     START
+                        
+                        ;--- Frequency 2Hz
+10bf 36                 FREQ2   PSHA
+10c0 35                         PSHY
+10c1 86 fa                      LDAA    #250
+10c3                    DELAY_LOOP
+10c3 cd 17 70                   LDY     #6000
+10c6                    FREQ_DELAY
+10c6 03                         DEY
+10c7 26 fd                      BNE     FREQ_DELAY
+10c9 43                         DECA
+10ca 26 f7                      BNE     DELAY_LOOP
+10cc 31                         PULY
+10cd 32                         PULA
+10ce 3d                         RTS
+                        
+                        ;--- Data Section ---
+10cf 3f 06 5b 4f 66 6d  NUMS    FCB     $3F,$06,$5B,$4F,$66,$6D,$7D,$07,$7F,$6F
+     7d 07 7f 6f
+10d9 45 6e 74 65 72 20  PROMPT  FCC     "Enter Password: "
+     50 61 73 73 77 6f
+     72 64 3a 20
+10e9 0d 0a 00                   FCB     $0D,$0A,$00
+10ec 6b 65 79           PASSKEY	FCB     $6B,$65,$79
+10ef 07                 COUNT   FCB     7
+10f0 03                 COUNTER	FCB     3
+10f1                    WRONG_MESS
+10f1 57 72 6f 6e 67 20          FCC     "Wrong Password"
+     50 61 73 73 77 6f
+     72 64
+10ff 0d 0a 00                   FCB     $0D,$0A,$00
+1102                    CORRECT_MESS
+1102 43 6f 72 72 65 63          FCC     "Correct Password"
+     74 20 50 61 73 73
+     77 6f 72 64
+1112 0d 0a 00                   FCB     $0D,$0A,$00
+1115 0d 0a 00           NEXTL   FCB     $0D,$0A,$00     ;New Line
+1118                    TARGET  RMB     1
+1119                    STR     RMB     3
+111c                    VAR     RMB     2
+                        
+                                END
+
+Executed: Sat Oct 18 14:44:00 2025
+Total cycles: 301, Total bytes: 280
+Total errors: 0, Total warnings: 0
