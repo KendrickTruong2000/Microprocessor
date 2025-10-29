@@ -1,0 +1,227 @@
+
+as12, an absolute assembler for Motorola MCU's, version 1.2h
+
+                        ;Midterm Assignment
+                        ;--- Define Equation Section ---
+0001                    DRB     EQU     $0001   ;Define PORT B
+0003                    DDRB    EQU     $0003   ;Define Data Direction PORT B
+0258                    DRP     EQU     $0258   ;Define PORT P
+025a                    DDRP    EQU     $025A   ;Define Data Direction PORT P
+0268                    DRJ     EQU     $0268   ;Define PORT J
+026a                    DDRJ    EQU     $026A   ;Define Data Direction PORT J
+ee88                    PRINTF  EQU     $EE88   ;Define PRINTF
+ee84                    GETCHAR EQU     $EE84   ;Define GETCHAR
+ee86                    PUTCHAR EQU     $EE86   ;Define PUTCHAR
+                        
+                        ;--- Main Program
+1000                            ORG     $1000
+1000 86 ff                      LDAA    #$FF
+1002 5a 03                      STAA    DDRB
+1004 7a 02 5a                   STAA    DDRP    ;Set PORT B, P to output.
+1007 7a 02 6a                   STAA    DDRJ
+100a 86 00                      LDAA    #$00
+100c 7a 02 58                   STAA    DRP     ;Turn ALL 7-segment off
+                        
+100f 36                 START   PSHA            ;Clear Accumulator A
+1010 37                         PSHB            ;Clear Accumulator B
+1011 3b                         PSHD            ;Clear register D
+1012 34                         PSHX            ;Clear register X
+1013 cc 11 3a                   LDD     #PROMPT ;Load promoption message into register D
+1016 fe ee 88                   LDX     PRINTF
+1019 15 00                      JSR     $00,X   ;Call PRINTF function
+101b ce 11 a2                   LDX     #STR    ;Load address of STR to store user input into X
+101e 7e 11 a5                   STX     VAR     ;Store address of STR to VAR
+                                
+1021                    READ_LOOP
+1021 fe ee 84                   LDX     GETCHAR
+1024 15 00                      JSR     $00,X   ;Call function GETCHAR
+1026 c1 1b                      CMPB    #$1B    ;Check for key ESC
+1028 27 12                      BEQ     END_INPUT       ;If ESC key detected jump to END_INPUT
+102a fe 11 a5                   LDX     VAR     ;load address of STR into X
+102d 6b 00                      STAB    $00,X   ;Store address of STR into B
+102f 08                         INX             ;Increase X
+1030 7e 11 a5                   STX     VAR     ;
+1033 c6 2a                      LDAB    #$2A    ;Load '*' into B
+1035 fe ee 86                   LDX     PUTCHAR ;Call PUTCHAR
+1038 15 00                      JSR     $00,X   ;Display '*' onto screen.
+103a 20 e5                      BRA     READ_LOOP       ;Continue reading.
+                                
+103c                    END_INPUT
+103c cc 11 9e                   LDD     #NEXTL  ;Load new line character into D
+103f fe ee 88                   LDX     PRINTF  ;Call PRINTF to display new line.
+1042 15 00                      JSR     $00,X
+1044 30                         PULX            ;Remove register X from memeory
+1045 3a                         PULD            ;Remove register D from memeory
+1046 33                         PULB            ;Remove accummulator B from memory
+1047 32                         PULA            ;Remove accummulator A from memory
+1048 16 10 4d                   JSR     COMPARE ;Jump to COMPARE subroutine
+104b 20 c2                      BRA     START
+                                
+104d 36                 COMPARE PSHA            ;Clear data from accummulator A
+104e 37                         PSHB            ;Clear data from accummulator B
+104f 3b                         PSHD            ;Clear register D
+1050 34                         PSHX            ;Clear register X
+1051 b6 11 51                   LDAA    COUNTER ;Load value of COUNTER
+1054 81 00                      CMPA    #0      ;Check number time user has input key pass have reach 0
+1056 27 5d                      BEQ     LOCK_ACC        ;If number of time equal to 0 jump to lock account
+1058 86 02                      LDAA    #2      ;Load A = 2 as valid
+105a 7a 11 a7                   STAA    FLAG    ;Set flag as valid
+105d c6 00                      LDAB    #0      ;Load B = 0 as counting index
+105f                    CMP_LOOP
+105f ce 11 4d                   LDX     #PASSKEY        ;Load actual PASSKEY into X
+1062 1a e5                      ABX             ;X = B + X to access index of PASSKEY accodingly to value of B
+1064 a6 00                      LDAA    $00,X   ;Load value of X into A
+1066 ce 11 a2                   LDX     #STR    ;Load address of STR into X
+1069 1a e5                      ABX             ;Access index of STR accodingly to value of B
+106b a1 00                      CMPA    $00,X   ;Compare character in A and X
+106d 26 2c                      BNE     NOT_VALID       ;IF not equal go to NOT_VALID
+106f 52                         INCB            ;Else increase B
+1070 c1 03                      CMPB    #3      ;Compare B with 3, check if looping through all 3 characters
+1072 27 02                      BEQ     VALID   ;If true jump to VALID
+1074 20 e9                      BRA     CMP_LOOP        ;Continue comparing loop.
+                        
+1076 86 02              VALID   LDAA    #2      ;Load A = 2
+1078 7a 11 a7                   STAA    FLAG    ;Set Flag as valid
+107b cc 11 72                   LDD     #CORRECT_MESS   ;Load Correct message
+107e fe ee 88                   LDX     PRINTF  ;Call PRINTF to print correct message
+1081 15 00                      JSR     $00,X
+1083 16 10 e5                   JSR     WAIT6   ;Jump to WAIT6 subroutine
+1086 b7 20                      TPA
+1088 84 af                      ANDA    #%10101111
+108a b7 02                      TAP
+108c 86 40                      LDAA    #$40
+108e 5a 1e                      STAA    $001E
+1090 cf 20 00                   LDS     #$2000
+1093 cc 10 d4                   LDD     #IRQISR ;Call maskable interrupt
+1096 7c 3e 72                   STD     $3E72
+1099 20 29                      BRA     END_CMP ;Move to END_CMP
+                        
+109b                    NOT_VALID
+109b 86 00                      LDAA    #0      ;Load A = 0
+109d 7a 11 a7                   STAA    FLAG    ;Set FLAG invalid
+10a0 b6 11 51                   LDAA    COUNTER ;Load COUNTER
+10a3 43                         DECA            ;Decrease A
+10a4 7a 11 51                   STAA    COUNTER ;Store new value of A into COUNTER
+10a7 81 00                      CMPA    #0        ;Compare A with 0
+10a9 27 0a                      BEQ     LOCK_ACC        ;If equal to 0 move to LOCK_ACC
+10ab cc 11 52                   LDD     #WRONG_MESS     ;Load WRONG_MESS
+10ae fe ee 88                   LDX     PRINTF  ;Call function PRINTF to print WRONG_MESS
+10b1 15 00                      JSR     $00,X
+10b3 20 0f                      BRA     END_CMP ;Move to END_CMP
+                                
+10b5                    LOCK_ACC
+10b5 86 01                      LDAA    #1      ;Load A = 1
+10b7 7a 11 a7                   STAA    FLAG    ;Set Flag to lock
+10ba cc 11 85                   LDD     #LOCK_MESS      ;Load LOCK_MESS into D
+10bd fe ee 88                   LDX     PRINTF  ;Call function PRINTF to print LOCK_MESS
+10c0 15 00                      JSR     $00,X
+10c2 20 00                      BRA     END_CMP ;Move to END_CMP
+                                
+10c4 30                 END_CMP PULX            ;Remove register X from memory
+10c5 3a                         PULD            ;Remove register D from memory
+10c6 33                         PULB            ;Remove accummulator B from memory
+10c7 32                         PULA            ;Remove accummulaotor A from memory
+10c8 f6 11 a7                   LDAB    FLAG    ;Load FLAG into B
+10cb c1 01                      CMPB    #1      ;If B equal to 1 status LOCK
+10cd 27 5e                      BEQ     HERE          ;Jump to FINISH
+10cf c1 02                      CMPB    #2      ;If B equal to 2 status VALID
+10d1 27 5a                      BEQ     HERE          ;Jump to FINISH
+10d3 3d                         RTS             ;Return subroutine
+                        
+                        ;--- IRQISR Subroutine
+10d4 86 ff              IRQISR  LDAA    #$FF    ;Set Port B, P, J to output
+10d6 5a 03                      STAA    DDRB
+10d8 7a 02 5a                   STAA    DDRP
+10db 7a 02 6a                   STAA    DDRJ
+10de 7a 02 58                   STAA    DRP     ;Enable LEDs, 7-SEGMENT
+10e1 16 11 09                   JSR     BLINK
+10e4 0b                         RTI
+                        
+                        ;--- WAIT 6 Second
+10e5 86 fe              WAIT6   LDAA    #$FE    ;Select Digit 3
+10e7 7a 02 58                   STAA    DRP
+10ea f6 11 50                   LDAB    COUNT   ;Load COUNT into B
+10ed cd 11 30                   LDY     #NUMS   ;Load address NUMS into Y
+10f0 86 00                      LDAA    #$00    ;Load accumulator A = 0
+10f2                    LOOP_NUMS
+10f2 a6 40                      LDAA    $00,Y   ;Load index of NUMS accordingly to Y
+10f4 5a 01                      STAA    DRB     ;Display number onto 7 segment onto B
+10f6 16 11 1d                   JSR     FREQ2
+10f9 16 11 1d                   JSR     FREQ2
+10fc 16 11 1d                   JSR     FREQ2
+10ff 16 11 1d                   JSR     FREQ2   ;Delay 250 ms 4 times = 1 sec
+1102 02                         INY             ;Move Y to next index of NUMS
+1103 53                         DECB            ;Decrease B to count number of second
+1104 26 ec                      BNE     LOOP_NUMS       ;Return to continue
+1106 6a 40                      STAA    $00,Y   ;Store next index of NUMS into accumulator A
+1108 3d                         RTS
+                        
+                        ;--- Blink LEDs 10 times
+1109 86 0a              BLINK   LDAA    #10     ;Load A = 10
+110b                    BLINK_LOOP
+110b c6 ff                      LDAB    #%11111111      ;Turn on all LEDs
+110d 5b 01                      STAB    DRB
+110f 16 11 1d                   JSR     FREQ2   ;Delay 250ms
+1112 c6 00                      LDAB    #%00000000      ;Turn off all LEDs
+1114 5b 01                      STAB    DRB
+1116 16 11 1d                   JSR     FREQ2   ;Delay 250ms
+1119 43                         DECA
+111a 26 ef                      BNE     BLINK_LOOP      ;Return and continue counting
+111c 3d                         RTS
+                                
+                        ;--- Frequency 2Hz
+111d 36                 FREQ2   PSHA            ;Clear data from accummulator A
+111e 35                         PSHY            ;Clear data from register Y
+111f 86 fa                      LDAA    #250    ;Load 250 into A
+1121                    DELAY_LOOP
+1121 cd 17 70                   LDY     #6000   ;Load 6000 into Y
+1124                    FREQ_DELAY
+1124 03                         DEY             ;Decrease Y
+1125 26 fd                      BNE     FREQ_DELAY      ;If loop not looping 6000 continue loopoing
+1127 43                         DECA                ;DecreaseA
+1128 26 f7                      BNE     DELAY_LOOP      ;If A not equal not looping 250
+112a 31                         PULY            ;Remove register Y from memory address
+112b 32                         PULA            ;Remove accummulator from memory address
+112c 3d                         RTS
+                        
+112d 20 fe              HERE    BRA     HERE
+112f 3f                 FINISH  SWI
+                                
+                        ;--- DATA
+1130 3f 06 5b 4f 66 6d  NUMS    FCB     $3F,$06,$5B,$4F,$66,$6D,$7D,$07,$7F,$6F
+     7d 07 7f 6f
+113a 45 6e 74 65 72 20  PROMPT  FCC     "Enter Password: "
+     50 61 73 73 77 6f
+     72 64 3a 20
+114a 0d 0a 00                   FCB     $0D,$0A,$00
+114d 6b 65 79           PASSKEY FCB     $6B,$65,$79     ;'K','E','Y'
+1150 07                 COUNT   FCB     7
+1151 03                 COUNTER FCB     3
+1152                    WRONG_MESS
+1152 49 44 20 69 6e 63          FCC     "ID incorrect PLease try again"
+     6f 72 72 65 63 74
+     20 50 4c 65 61 73
+     65 20 74 72 79 20
+     61 67 61 69 6e
+116f 0d 0a 00                   FCB     $0D,$0A,$00
+1172                    CORRECT_MESS
+1172 43 6f 72 72 65 63          FCC     "Correct Password"
+     74 20 50 61 73 73
+     77 6f 72 64
+1182 0d 0a 00                   FCB     $0D,$0A,$00
+1185                    LOCK_MESS
+1185 59 4f 55 52 20 41          FCC     "YOUR ACCOUNT IS LOCKED"
+     43 43 4f 55 4e 54
+     20 49 53 20 4c 4f
+     43 4b 45 44
+119b 0d 0a 00                   FCB     $0D,$0A,$00
+119e 0d 0a 00           NEXTL   FCB     $0D,$0A,$00     ;New Line
+11a1                    TARGET  RMB     1
+11a2                    STR     RMB     3
+11a5                    VAR     RMB     2
+11a7                    FLAG    RMB     1
+                                
+
+Executed: Wed Oct 29 14:09:46 2025
+Total cycles: 443, Total bytes: 417
+Total errors: 0, Total warnings: 0

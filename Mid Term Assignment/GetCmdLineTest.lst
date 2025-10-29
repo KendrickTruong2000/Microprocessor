@@ -1,0 +1,59 @@
+
+as12, an absolute assembler for Motorola MCU's, version 1.2h
+
+ee84                    GETCHAR	EQU 	$EE84
+ee86                    PUTCHAR	EQU 	$EE86
+ee88                    PRINTF	EQU 	$EE88
+                        
+1000                            ORG 	$1000
+1000                    START:
+1000 cf 40 00                   LDS	#$4000
+                        
+                        ;--- Print prompt ---
+1003 cc 10 35                   LDD 	#PROMPT
+1006 fe ee 88                   LDX     PRINTF
+1009 15 00                      JSR 	$00,X
+                        
+100b cd 10 43                   LDY 	#BUFFER
+                        
+100e                    READ_LOOP:
+                                ; Get character
+100e fc ee 84                   LDD 	GETCHAR
+1011 15 00                      JSR 	$00,X
+1013 7a 10 b2                   STAA    TARGET
+1016 81 0d                      CMPA 	#$0D
+1018 27 07                      BEQ 	END_INPUT
+101a fe ee 86                   LDX     PUTCHAR
+101d 15 00                      JSR     $00,X
+101f 20 ed                      BRA 	READ_LOOP
+                        
+1021                    END_INPUT:
+1021 87                         CLRA
+1022 6a 40                      STAA 	0,Y          ; Null-terminate
+                        
+                        ;--- Print header ---
+1024 cc 10 a7                   LDD 	#RESULT
+1027 fe ee 88                   LDX     PRINTF
+102a 15 00                      JSR 	$00,X
+                        
+                        ;--- Print entered string ---
+102c cc 10 43                   LDD 	#BUFFER
+102f fe ee 88                   LDX     PRINTF
+1032 15 00                      JSR 	$00,X
+                        
+1034                    FINISH:
+1034 3f                         SWI
+                        
+                        ;--- Data ---
+1035 45 6e 74 65 72 20  PROMPT	FCC 	"Enter a line: ",0
+     61 20 6c 69 6e 65
+     3a 20
+1043                    BUFFER	RMB 	100
+10a7 59 6f 75 20 74 79  RESULT	FCC 	"You typed: ",0
+     70 65 64 3a 20
+10b2                    TARGET  RMB     1
+                                END
+
+Executed: Fri Oct 10 11:39:19 2025
+Total cycles: 78, Total bytes: 78
+Total errors: 0, Total warnings: 0

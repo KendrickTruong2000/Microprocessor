@@ -1,0 +1,11 @@
+buffer     1043
+end_input  1021
+finish     1034
+getchar    ee84
+printf     ee88
+prompt     1035
+putchar    ee86
+read_loop  100e
+result     10a7
+start      1000
+target     10b2
