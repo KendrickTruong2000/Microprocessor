@@ -1,0 +1,117 @@
+
+as12, an absolute assembler for Motorola MCU's, version 1.2h
+
+                        ;--- Define equation ---
+0001                    DRB     EQU         $0001
+0003                    DDRB    EQU         $0003
+0268                    DRJ     EQU     $0268
+026a                    DDRJ    EQU     $026A
+0258                    DRP     EQU         $0258
+025a                    DDRP    EQU         $025A
+0260                    DRH     EQU         $0260
+0262                    DDRH    EQU         $0262
+                        
+                        ;--- Main Program ---
+1000                            ORG     $1000
+1000 86 ff                      LDAA    #$FF
+1002 5a 03                      STAA    DDRB
+1004 7a 02 6a                   STAA    DDRJ
+1007 7a 02 5a                   STAA    DDRP
+100a 86 00                      LDAA    #$00
+100c 7a 02 62                   STAA    DDRH
+100f 16 10 17           START          JSR     HTOD
+1012 16 10 52                   JSR     DISP
+1015 20 f8                      BRA     START
+                        
+1017 36                 HTOD    PSHA
+1018 37                         PSHB
+1019 34                         PSHX
+101a f6 02 60                   LDAB    DRH
+101d 86 c4                      LDAA    #196
+101f 12                         MUL
+                        
+1020 ce 27 10           	LDX     #10000
+1023 18 10                      IDIV
+1025 b7 c5              	XGDX
+1027 7b 10 ac                   STAB    THOUS
+                                
+102a b7 c5                      XGDX
+102c ce 03 e8                   LDX     #1000
+102f 18 10                      IDIV
+1031 b7 c5                      XGDX
+1033 7b 10 ad                   STAB    HUNDS
+                                
+1036 b7 c5                      XGDX
+1038 ce 00 64                   LDX     #100
+103b 18 10                      IDIV
+103d b7 c5                      XGDX
+103f 7b 10 ae                   STAB    TENS
+                                
+1042 b7 c5                      XGDX
+1044 ce 00 0a                   LDX     #10
+1047 18 10                      IDIV
+1049 b7 c5                      XGDX
+104b 7b 10 af                   STAB	UNITS
+104e 30                         PULX
+104f 33                         PULB
+1050 32                         PULA
+1051 3d                         RTS
+                        
+1052 86 fe              DISP    LDAA    #$FE
+1054 7a 02 58                   STAA    DRP
+1057 ce 10 ba                   LDX     #SEGDOT
+105a f6 10 ac                   LDAB    THOUS
+105d 1a e5                      ABX
+105f a6 00                      LDAA    $00,X
+1061 5a 01                      STAA    DRB
+1063 16 10 a3                   JSR     DELAY1
+                                
+1066 86 fd                      LDAA    #$FD
+1068 7a 02 58                   STAA    DRP
+106b ce 10 b0                   LDX     #SEGDIG
+106e f6 10 ad                   LDAB    HUNDS
+1071 1a e5                      ABX
+1073 a6 00                      LDAA    $00,X
+1075 5a 01                      STAA    DRB
+1077 16 10 a3                   JSR     DELAY1
+                                
+107a 86 fb                      LDAA    #$FB
+107c 7a 02 58                   STAA    DRP
+107f ce 10 b0                   LDX     #SEGDIG
+1082 f6 10 ae                   LDAB    TENS
+1085 1a e5                      ABX
+1087 a6 00                      LDAA    $00,X
+1089 5a 01                      STAA    DRB
+108b 16 10 a3                   JSR     DELAY1
+                                
+108e 86 f7                      LDAA    #$F7
+1090 7a 02 58                   STAA    DRP
+1093 f6 10 af                   LDAB    UNITS
+1096 ce 10 b0                   LDX     #SEGDIG
+1099 1a e5                      ABX
+109b a6 00                      LDAA    $00,X
+109d 5a 01                      STAA    DRB
+109f 16 10 a3                   JSR     DELAY1
+10a2 3d                         RTS
+                        
+10a3 35                 DELAY1  PSHY
+10a4 cd 17 70                   LDY     #6000
+10a7 03                 DELAY   DEY
+10a8 26 fd                      BNE     DELAY
+10aa 31                         PULY
+10ab 3d                         RTS
+                        
+                        ;--- Data Section ---
+10ac                    THOUS   RMB     1
+10ad                    HUNDS   RMB     1
+10ae                    TENS    RMB     1
+10af                    UNITS   RMB     1
+10b0 3f 06 5b 4f 66 6d  SEGDIG  FCB     $3F,$06,$5B,$4F,$66,$6D,$7D,$07,$7F,$6F
+     7d 07 7f 6f
+10ba bf 86 db cf e6 ed  SEGDOT  FCB     $BF,$86,$DB,$CF,$E6,$ED,$FD,$87,$FF,$EF
+     fd 87 ff ef
+                                END
+
+Executed: Wed Nov 05 14:15:46 2025
+Total cycles: 258, Total bytes: 192
+Total errors: 0, Total warnings: 0

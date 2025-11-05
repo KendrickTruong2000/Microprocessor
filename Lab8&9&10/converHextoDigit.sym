@@ -1,0 +1,19 @@
+ddrb       0003
+ddrh       0262
+ddrj       026a
+ddrp       025a
+delay      10a7
+delay1     10a3
+disp       1052
+drb        0001
+drh        0260
+drj        0268
+drp        0258
+htod       1017
+hunds      10ad
+segdig     10b0
+segdot     10ba
+start      100f
+tens       10ae
+thous      10ac
+units      10af
