@@ -1,0 +1,182 @@
+
+as12, an absolute assembler for Motorola MCU's, version 1.2h
+
+                        ;--- Define Equation ---
+0002                    DDRA    EQU     $0002
+0000                    DRA     EQU     $0000
+0003                    DDRB    EQU     $0003
+0001                    DRB     EQU     $0001
+025a                    DDRP    EQU     $025A
+0258                    DRP     EQU     $0258
+000c                    PUCR    EQU     $000C
+                        
+                        ;--- Main Program ---
+1000                            ORG     $1000
+1000 86 ff                      LDAA    #$FF
+1002 5a 03                      STAA    DDRB
+1004 7a 02 5a                   STAA    DDRP
+1007 86 0f                      LDAA    #$0F
+1009 5a 02                      STAA    DDRA
+                        ;Enable extrem left seven seg
+100b 86 fe                      LDAA    #$FE
+100d 7a 02 58                   STAA    DRP
+                        ;Enable pull up resgister
+1010 86 01                      LDAA    #$01
+1012 5a 0c                      STAA    PUCR
+                        ;Run through columns to check any key press
+1014 86 f7              LOOP    LDAA    #$F7
+1016 7a 11 8b                   STAA    TEMP1
+1019 c6 04                      LDAB    #$04
+101b 5a 00              NEXT    STAA    DRA
+101d 16 11 80                   JSR     DELAY
+1020 96 00                      LDAA    DRA
+1022 7a 11 8c                   STAA    TEMP3
+1025 84 f0                      ANDA    #$F0
+1027 81 f0                      CMPA    #$F0
+1029 26 0b                      BNE     PRESS
+102b 76 11 8b                   ROR     TEMP1
+102e b6 11 8b                   LDAA    TEMP1
+1031 53                         DECB
+1032 27 e0                      BEQ     LOOP
+1034 20 e5                      BRA     NEXT
+                        ;If any key press check rach possible code
+1036 86 7d              PRESS   LDAA    #$7D
+1038 b1 11 8c                   CMPA    TEMP3
+103b 26 14                      BNE     GOTO1
+103d c6 00                      LDAB    #$0
+103f 7b 11 8d                   STAB    KEY
+1042 16 11 73                   JSR     DISPLAY
+1045 06 10 14                   JMP     LOOP
+1048 7b 11 8d                   STAB    KEY
+104b 16 11 73                   JSR     DISPLAY
+104e 06 10 14                   JMP     LOOP
+1051 86 ee              GOTO1   LDAA    #$EE
+1053 b1 11 8c                   CMPA    TEMP3
+1056 26 0b                      BNE     GOTO2
+1058 c6 01                      LDAB    #$1
+105a 7b 11 8d                   STAB    KEY
+105d 16 11 73                   JSR     DISPLAY
+1060 06 10 14                   JMP     LOOP
+1063 86 ed              GOTO2   LDAA    #$ED
+1065 b1 11 8c                   CMPA    TEMP3
+1068 26 0b                      BNE     GOTO3
+106a c6 02                      LDAB    #$2
+106c 7b 11 8d                   STAB    KEY
+106f 16 11 73                   JSR     DISPLAY
+1072 06 10 14                   JMP     LOOP
+1075 86 eb              GOTO3   LDAA    #$EB
+1077 b1 11 8c                   CMPA    TEMP3
+107a 26 0b                      BNE     GOTO4
+107c c6 03                      LDAB    #$3
+107e 7b 11 8d                   STAB    KEY
+1081 16 11 73                   JSR     DISPLAY
+1084 06 10 14                   JMP     LOOP
+1087 86 de              GOTO4   LDAA    #$DE
+1089 b1 11 8c                   CMPA    TEMP3
+108c 26 0b                      BNE     GOTO5
+108e c6 04                      LDAB    #$4
+1090 7b 11 8d                   STAB    KEY
+1093 16 11 73                   JSR     DISPLAY
+1096 06 10 14                   JMP     LOOP
+1099 86 dd              GOTO5   LDAA    #$DD
+109b b1 11 8c                   CMPA    TEMP3
+109e 26 0b                      BNE     GOTO6
+10a0 c6 05                      LDAB    #$5
+10a2 7b 11 8d                   STAB    KEY
+10a5 16 11 73                   JSR     DISPLAY
+10a8 06 10 14                   JMP     LOOP
+10ab 86 db              GOTO6   LDAA    #$DB
+10ad b1 11 8c                   CMPA    TEMP3
+10b0 18 26 00 0b                LBNE     GOTO7
+10b4 c6 06                      LDAB    #$6
+10b6 7b 11 8d                   STAB    KEY
+10b9 16 11 73                   JSR     DISPLAY
+10bc 06 10 14                   JMP     LOOP
+10bf 86 be              GOTO7   LDAA    #$BE
+10c1 b1 11 8c                   CMPA    TEMP3
+10c4 18 26 00 0b                LBNE     GOTO8
+10c8 c6 07                      LDAB    #$7
+10ca 7b 11 8d                   STAB    KEY
+10cd 16 11 73                   JSR     DISPLAY
+10d0 06 10 14                   JMP     LOOP
+10d3 86 bd              GOTO8   LDAA    #$BD
+10d5 b1 11 8c                   CMPA    TEMP3
+10d8 18 26 00 0b                LBNE     GOTO9
+10dc c6 08                      LDAB    #$8
+10de 7b 11 8d                   STAB    KEY
+10e1 16 11 73                   JSR     DISPLAY
+10e4 06 10 14                   JMP     LOOP
+10e7 86 bb              GOTO9   LDAA    #$BB
+10e9 b1 11 8c                   CMPA    TEMP3
+10ec 18 26 00 0b                LBNE     GOTOA
+10f0 c6 09                      LDAB    #$9
+10f2 7b 11 8d                   STAB    KEY
+10f5 16 11 73                   JSR     DISPLAY
+10f8 06 10 14                   JMP     LOOP
+10fb 86 e7              GOTOA   LDAA    #$E7
+10fd b1 11 8c                   CMPA    TEMP3
+1100 18 26 00 0b                LBNE     GOTOB
+1104 c6 0a                      LDAB    #$0A
+1106 7b 11 8d                   STAB    KEY
+1109 16 11 73                   JSR     DISPLAY
+110c 06 10 14                   JMP     LOOP
+110f 86 d7              GOTOB   LDAA    #$D7
+1111 b1 11 8c                   CMPA    TEMP3
+1114 18 26 00 0b                LBNE     GOTOC
+1118 c6 0b                      LDAB    #$0B
+111a 7b 11 8d                   STAB    KEY
+111d 16 11 73                   JSR     DISPLAY
+1120 06 10 14                   JMP     LOOP
+1123 86 b7              GOTOC   LDAA    #$B7
+1125 b1 11 8c                   CMPA    TEMP3
+1128 18 26 00 0b                LBNE     GOTOD
+112c c6 0c                      LDAB    #$0C
+112e 7b 11 8d                   STAB    KEY
+1131 16 11 73                   JSR     DISPLAY
+1134 06 10 14                   JMP     LOOP
+1137 86 77              GOTOD   LDAA    #$77
+1139 b1 11 8c                   CMPA    TEMP3
+113c 18 26 00 0b                LBNE    GOTOE
+1140 c6 0d                      LDAB    #$0D
+1142 7b 11 8d                   STAB    KEY
+1145 16 11 73                   JSR     DISPLAY
+1148 06 10 14                   JMP     LOOP
+114b 86 7e              GOTOE   LDAA    #$7E
+114d b1 11 8c                   CMPA    TEMP3
+1150 18 26 00 0b                LBNE     GOTOF
+1154 c6 0e                      LDAB    #$0E
+1156 7b 11 8d                   STAB    KEY
+1159 16 11 73                   JSR     DISPLAY
+115c 06 10 14                   JMP     LOOP
+115f 86 7b              GOTOF   LDAA    #$7B
+1161 b1 11 8c                   CMPA    TEMP3
+1164 18 26 fe ac                LBNE     LOOP
+1168 c6 0f                      LDAB    #$0F
+116a 7b 11 8d                   STAB    KEY
+116d 16 11 73                   JSR     DISPLAY
+1170 06 10 14                   JMP     LOOP
+                                
+1173 ce 11 8e           DISPLAY LDX     #PATTERN
+1176 f6 11 8d                   LDAB    KEY
+1179 1a e5                      ABX
+117b a6 00                      LDAA    $00,X
+117d 5a 01                      STAA    DRB
+117f 3d                         RTS
+1180 34                 DELAY   PSHX
+1181 ce 17 70                   LDX     #6000
+1184 09                 LOOP2   DEX
+1185 18 26 ff fb                LBNE     LOOP2
+1189 30                         PULX
+118a 3d                         RTS
+                        ;--- Data section ---
+118b                    TEMP1   RMB     1
+118c                    TEMP3   RMB     1
+118d                    KEY     RMB     1
+118e 3f 06 5b 4f 66 6d  PATTERN FCB     $3F,$06,$5B,$4F,$66,$6D,$7D,$07,$7F,$67,$77,$7C,$39,$5E,$79,$71
+     7d 07 7f 67 77 7c
+     39 5e 79 71
+                                END
+
+Executed: Wed Nov 19 14:42:19 2025
+Total cycles: 495, Total bytes: 411
+Total errors: 0, Total warnings: 0
