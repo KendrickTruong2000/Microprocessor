@@ -1,0 +1,22 @@
+cmp_loop   1048
+compare    1042
+count      1079
+done       1078
+end_cmp    1073
+end_input  1031
+equ_mes    1094
+equal      105f
+flag       10ce
+getchar    ee84
+key        107d
+nequ_mes   10ac
+nextl      107a
+not_equal  1069
+printf     ee88
+putchar    ee86
+read_loop  1012
+start      1008
+str        10c8
+string     1080
+target     10cd
+var        10cb
