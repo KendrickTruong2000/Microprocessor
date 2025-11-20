@@ -1,0 +1,56 @@
+
+as12, an absolute assembler for Motorola MCU's, version 1.2h
+
+                        ;--- Define Equation ---
+0001                    DRB     EQU     $0001
+0003                    DDRB    EQU     $0003
+0258                    DRP     EQU     $0258
+025a                    DDRP    EQU     $025A
+0268                    DRJ     EQU     $0268
+026a                    DDRJ    EQU     $026A
+                        ;--- Main Program ---
+1000                            ORG     $1000
+1000 86 ff                      LDAA    #$FF
+1002 5a 03                      STAA    DDRB
+1004 7a 02 5a                   STAA    DDRP
+1007 7a 02 6a                   STAA    DDRJ
+100a f6 10 4a           START   LDAB    COUNT
+100d cd 10 40                   LDY     #NUMS
+1010 86 fe                      LDAA    #$FE
+1012 7a 02 58                   STAA    DRP
+1015 86 00                      LDAA    #$00
+1017 a6 40              LOOP    LDAA    $00,Y
+1019 5a 01                      STAA    DRB
+101b 16 10 2f                   JSR     DELAY
+101e 16 10 2f                   JSR     DELAY
+1021 16 10 2f                   JSR     DELAY
+1024 16 10 2f                   JSR     DELAY
+1027 02                         INY
+1028 53                         DECB
+1029 26 ec                      BNE     LOOP
+102b 6a 40                      STAA    $00,Y
+102d 20 db                      BRA     START
+                                
+102f 36                 DELAY   PSHA
+1030 35                         PSHY
+1031 86 fa                      LDAA    #250
+1033                    FREQ_LOOP
+1033 cd 17 70                   LDY     #6000
+1036                    DELAY_LOOP
+1036 03                         DEY
+1037 26 fd                      BNE     DELAY_LOOP
+1039 43                         DECA
+103a 26 f7                      BNE     FREQ_LOOP
+103c 31                         PULY
+103d 32                         PULA
+103e 3d                         RTS
+                        
+103f 3f                 FINISH  SWI
+                        ;--- Data Section ---
+1040 3f 06 5b 4f 66 6d  NUMS    FCB     $3F,$06,$5B,$4F,$66,$6D,$7D,$07,$7F,$6F
+     7d 07 7f 6f
+104a 09                 COUNT   FCB     $9
+
+Executed: Wed Nov 19 08:57:04 2025
+Total cycles: 107, Total bytes: 75
+Total errors: 0, Total warnings: 0

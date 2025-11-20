@@ -1,0 +1,15 @@
+count      1050
+ddrb       0003
+ddrj       026a
+ddrp       025a
+delay      1035
+delay_loop 103c
+display    1028
+drb        0001
+drj        0268
+drp        0258
+finish     1045
+freq_loop  1039
+loop       1011
+nums       1046
+start      100a

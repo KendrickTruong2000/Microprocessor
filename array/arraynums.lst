@@ -1,0 +1,80 @@
+
+as12, an absolute assembler for Motorola MCU's, version 1.2h
+
+                        ;--- Define Equation ---
+0001                    DRB     EQU     $0001
+0003                    DDRB    EQU     $0003
+0258                    DRP     EQU     $0258
+025a                    DDRP    EQU     $025A
+0268                    DRJ     EQU     $0268
+026a                    DDRJ    EQU     $026A
+                        ;--- Main Program ---
+1000                            ORG     $1000
+1000 86 ff                      LDAA    #$FF
+1002 5a 03                      STAA    DDRB
+1004 7a 02 5a                   STAA    DDRP
+1007 7a 02 6a                   STAA    DDRJ
+                        ;--- Extract value in NUMS one-by-one.
+                        ;START   LDAB    COUNT
+                        ;        LDY     #NUMS
+                        ;        LDAA    #$FE
+                        ;        STAA    DRP
+                        ;        LDAA    #$00
+                        ;LOOP    LDAA    $00,Y
+                        ;        STAA    DRB
+                        ;        JSR     DELAY
+                        ;        JSR     DELAY
+                        ;        JSR     DELAY
+                        ;        JSR     DELAY
+                        ;        INY
+                        ;        DECB
+                        ;        BNE     LOOP
+                        ;        STAA    $00,Y
+                        ;        BRA     START
+                                
+                        ;--- Extract value at specific index ---
+100a c6 00              START   LDAB    #$0
+100c 86 fe                      LDAA    #$FE
+100e 7a 02 58                   STAA    DRP
+1011 7b 10 50           LOOP    STAB    COUNT
+1014 16 10 28                   JSR     DISPLAY
+1017 16 10 35                   JSR     DELAY
+101a 16 10 35                   JSR     DELAY
+101d 16 10 35                   JSR     DELAY
+1020 16 10 35                   JSR     DELAY
+1023 52                         INCB
+1024 c1 0a                      CMPB    #$A
+1026 26 e9                      BNE     LOOP
+                        
+1028 ce 10 46           DISPLAY LDX     #NUMS
+102b f6 10 50                   LDAB    COUNT
+102e 1a e5                      ABX
+1030 a6 00                      LDAA    $00,X
+1032 5a 01                      STAA    DRB
+1034 3d                         RTS
+                                
+1035 36                 DELAY   PSHA
+1036 35                         PSHY
+1037 86 fa                      LDAA    #250
+1039                    FREQ_LOOP
+1039 cd 17 70                   LDY     #6000
+103c                    DELAY_LOOP
+103c 03                         DEY
+103d 26 fd                      BNE     DELAY_LOOP
+103f 43                         DECA
+1040 26 f7                      BNE     FREQ_LOOP
+1042 31                         PULY
+1043 32                         PULA
+1044 3d                         RTS
+                        
+1045 3f                 FINISH  SWI
+                        ;--- Data Section ---
+1046 3f 06 5b 4f 66 6d  NUMS    FCB     $3F,$06,$5B,$4F,$66,$6D,$7D,$07,$7F,$6F
+     7d 07 7f 6f
+                        ;COUNT   FCB     $9
+1050                    COUNT   RMB     1
+                                END
+
+Executed: Thu Nov 20 08:52:59 2025
+Total cycles: 119, Total bytes: 80
+Total errors: 0, Total warnings: 0
