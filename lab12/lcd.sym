@@ -1,12 +1,0 @@
-ddrk       0033
-delay      109e
-delay_1    10a6
-done       102d
-drk        0032
-enab       102f
-init       103c
-loop       10a3
-send       1006
-sub_init   107d
-text       10b0
-var        10af
