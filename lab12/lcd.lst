@@ -1,0 +1,119 @@
+
+as12, an absolute assembler for Motorola MCU's, version 1.2h
+
+0032                    DRK     EQU     $0032
+0033                    DDRK    EQU     $0033
+                        
+1000                            ORG     $1000
+1000 16 10 3c                   JSR     INIT
+1003 ce 10 b0                   LDX     #TEXT
+1006 a6 00              SEND    LDAA    $00,X
+1008 27 23                      BEQ     DONE
+100a 84 f0                      ANDA    #$F0
+100c 44                         LSRA
+100d 44                         LSRA
+100e 5a 32                      STAA    DRK
+1010 4c 32 01                   BSET    DRK,%00000001
+1013 16 10 2f                   JSR     ENAB
+1016 16 10 9e                   JSR     DELAY
+1019 a6 00                      LDAA    $00,X
+101b 84 0f                      ANDA    #$0F
+101d 48                         LSLA
+101e 48                         LSLA
+101f 5a 32                      STAA    DRK
+1021 4c 32 01                   BSET    DRK,%00000001
+1024 16 10 2f                   JSR     ENAB
+1027 16 10 9e                   JSR     DELAY
+102a 08                         INX
+102b 20 d9                      BRA     SEND
+102d 20 fe              DONE    BRA     DONE
+                        
+102f 4c 32 02           ENAB    BSET    DRK,%00000010
+1032 16 10 9e                   JSR     DELAY
+1035 4d 32 02                   BCLR    DRK,%00000010
+1038 16 10 9e                   JSR     DELAY
+103b 3d                         RTS
+                        
+103c 86 ff              INIT    LDAA    #$FF
+103e 5a 33                      STAA    DDRK
+1040 16 10 9e                   JSR     DELAY
+                        
+1043 86 0c                      LDAA    #$0C
+1045 5a 32                      STAA    DRK
+1047 16 10 2f                   JSR     ENAB
+104a 16 10 9e                   JSR     DELAY
+104d 16 10 2f                   JSR     ENAB
+1050 16 10 9e                   JSR     DELAY
+1053 16 10 2f                   JSR     ENAB
+1056 16 10 9e                   JSR     DELAY
+                        
+1059 86 08                      LDAA    #$08
+105b 5a 32                      STAA    DRK
+105d 16 10 2f                   JSR     ENAB
+1060 16 10 9e                   JSR     DELAY
+                        
+1063 86 28                      LDAA    #$28
+1065 16 10 7d                   JSR     SUB_INIT
+                        
+1068 86 08                      LDAA    #$08
+106a 16 10 7d                   JSR     SUB_INIT
+                        
+106d 86 01                      LDAA    #$01
+106f 16 10 7d                   JSR     SUB_INIT
+                        
+1072 86 06                      LDAA    #$06
+1074 16 10 7d                   JSR     SUB_INIT
+                        
+1077 86 0f                      LDAA    #$0F
+1079 16 10 7d                   JSR     SUB_INIT
+107c 3d                         RTS
+                        
+                        
+107d                    SUB_INIT:
+107d 36                         PSHA
+107e 7a 10 af                   STAA    VAR
+1081 84 f0                      ANDA    #$F0
+1083 44                         LSRA
+1084 44                         LSRA
+1085 5a 32                      STAA    DRK
+1087 16 10 2f                   JSR     ENAB
+108a 16 10 9e                   JSR     DELAY
+108d b6 10 af                   LDAA    VAR
+1090 84 0f                      ANDA    #$0F
+1092 48                         LSLA
+1093 48                         LSLA
+1094 5a 32                      STAA    DRK
+1096 16 10 2f                   JSR     ENAB
+1099 16 10 9e                   JSR     DELAY
+109c 32                         PULA
+109d 3d                         RTS
+                        
+                        
+                        
+109e 34                 DELAY        PSHX
+109f 35                         PSHY
+10a0 ce 00 19                   LDX        #25
+10a3 cd 17 70           LOOP        LDY     #6000
+10a6 03                 DELAY_1        DEY
+10a7 26 fd                      BNE     DELAY_1
+10a9 09                         DEX
+10aa 26 f7                      BNE     LOOP
+10ac 31                         PULY
+10ad 30                         PULX
+10ae 3d                         RTS
+                        
+10af                    VAR     RMB     1
+10b0 4b 48 41 4e 47     TEXT    FCC     "KHANG"
+10b5 20 20 20 20 20 20          FCC     "                                   "
+     20 20 20 20 20 20
+     20 20 20 20 20 20
+     20 20 20 20 20 20
+     20 20 20 20 20 20
+     20 20 20 20 20
+10d8 54 52 55 4f 4e 47          FCC     "TRUONG PHU"
+     20 50 48 55
+10e2 00                         FCB     $00
+
+Executed: Wed Nov 26 14:21:08 2025
+Total cycles: 290, Total bytes: 226
+Total errors: 0, Total warnings: 0
